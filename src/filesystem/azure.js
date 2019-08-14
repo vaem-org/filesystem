@@ -17,24 +17,39 @@ import {
 
 import moment from 'moment'
 
-const sharedKeyCredential = process.env.AZURE_ACCOUNT && new SharedKeyCredential(process.env.AZURE_ACCOUNT,
-  process.env.AZURE_KEY);
-
-const pipeline = sharedKeyCredential && StorageURL.newPipeline(sharedKeyCredential);
-
-const serviceUrl = pipeline && new ServiceURL(
-  `https://${process.env.AZURE_ACCOUNT}.blob.core.windows.net`,
-  pipeline
-);
-
-const containerURL = serviceUrl && ContainerURL.fromServiceURL(
-  serviceUrl,
-  process.env.AZURE_CONTAINER
-);
-
 export class AzureFileSystem extends FileSystem {
-  constructor() {
+  /**
+   * Construct a new Azure file system
+   * @param {String} azureKey
+   * @param {String} azureAccount
+   * @param {String} azureContainer
+   */
+  constructor({
+    azureKey,
+    azureAccount,
+    azureContainer
+              }) {
     super(null);
+
+    this.azureAccount = azureAccount;
+    this.azureContainer = azureContainer;
+    this.sharedKeyCredential = new SharedKeyCredential(
+      azureAccount,
+      azureKey
+    );
+
+    const pipeline = StorageURL.newPipeline(this.sharedKeyCredential);
+
+    const serviceUrl = pipeline && new ServiceURL(
+      `https://${azureAccount}.blob.core.windows.net`,
+      pipeline
+    );
+
+    this.containerURL = serviceUrl && ContainerURL.fromServiceURL(
+      serviceUrl,
+      azureContainer
+    );
+
     this.workingDirectory = '/'
   }
 
@@ -69,7 +84,7 @@ export class AzureFileSystem extends FileSystem {
   }
 
   async get(fileName) {
-    const blobURL = BlobURL.fromContainerURL(containerURL, this.resolvePath(fileName));
+    const blobURL = BlobURL.fromContainerURL(this.containerURL, this.resolvePath(fileName));
     let properties;
 
     try {
@@ -93,7 +108,7 @@ export class AzureFileSystem extends FileSystem {
     const result = [];
 
     do {
-      const response = await containerURL.listBlobHierarchySegment(
+      const response = await this.containerURL.listBlobHierarchySegment(
         Aborter.none,
         '/',
         marker,
@@ -125,7 +140,7 @@ export class AzureFileSystem extends FileSystem {
   async read(filename, { start = undefined } = {}) {
     const resolved = this.resolvePath(filename);
     console.log(`Reading ${resolved}`);
-    const blobURL = BlobURL.fromContainerURL(containerURL, resolved);
+    const blobURL = BlobURL.fromContainerURL(this.containerURL, resolved);
     const response = await blobURL.download(
       Aborter.none,
       start || 0
@@ -141,7 +156,7 @@ export class AzureFileSystem extends FileSystem {
     const clientPath = this.resolvePath(filename);
     const stream = new PassThrough();
 
-    const blockBlokURL = BlockBlobURL.fromContainerURL(containerURL, clientPath);
+    const blockBlokURL = BlockBlobURL.fromContainerURL(this.containerURL, clientPath);
 
     uploadStreamToBlockBlob(
       Aborter.none,
@@ -167,7 +182,7 @@ export class AzureFileSystem extends FileSystem {
   async delete(path) {
     const clientPath = this.resolvePath(path);
     console.log(`Deleting ${clientPath}`);
-    const blockBlokURL = BlockBlobURL.fromContainerURL(containerURL, clientPath);
+    const blockBlokURL = BlockBlobURL.fromContainerURL(this.containerURL, clientPath);
     await blockBlokURL.delete(Aborter.none)
   }
 
@@ -176,9 +191,9 @@ export class AzureFileSystem extends FileSystem {
     const resolvedTo = this.resolvePath(to);
     console.log(`Renaming ${resolvedFrom} to ${resolvedTo}`);
 
-    const destinationBlobURL = BlobURL.fromContainerURL(containerURL, resolvedTo);
+    const destinationBlobURL = BlobURL.fromContainerURL(this.containerURL, resolvedTo);
 
-    const sourceBlobURL = BlobURL.fromContainerURL(containerURL, resolvedFrom);
+    const sourceBlobURL = BlobURL.fromContainerURL(this.containerURL, resolvedFrom);
     await destinationBlobURL.startCopyFromURL(
       Aborter.none,
       sourceBlobURL.url
@@ -193,15 +208,15 @@ export class AzureFileSystem extends FileSystem {
     const permissions = new BlobSASPermissions();
     permissions.read = true;
     const blobName = this.resolvePath(filename);
-    const containerName = process.env.AZURE_CONTAINER;
+    const containerName = this.azureContainer;
     const result = generateBlobSASQueryParameters({
       containerName,
       blobName,
       permissions: permissions.toString(),
       expiryTime: moment().add(1, 'hours').toDate(),
       protocol: 'https'
-    }, sharedKeyCredential);
+    }, this.sharedKeyCredential);
 
-    return `https://${process.env.AZURE_ACCOUNT}.blob.core.windows.net/${containerName}/${blobName}?${result.toString()}`
+    return `https://${this.azureAccount}.blob.core.windows.net/${containerName}/${blobName}?${result.toString()}`
   }
 }
