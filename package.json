@@ -9,9 +9,10 @@
     "dev": "babel src -d dist -w src",
     "prepublish": "yarn build"
   },
+  "repository": "git@github.com:vaem-org/filesystem.git",
   "keywords": [],
   "author": "Wouter van de Molengraft",
-  "license": "GPL",
+  "license": "GPL-3.0-only",
   "dependencies": {
     "@azure/storage-blob": "^10.4.0",
     "aws-sdk": "^2.510.0",
