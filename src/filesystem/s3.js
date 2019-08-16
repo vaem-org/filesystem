@@ -35,7 +35,7 @@ export class S3FileSystem extends FileSystem {
   /**
    * Get a Stats object for blob or folder
    * @param {String} name
-   * @param {BlobProperties} properties
+   * @param {{}} properties
    * @returns {Promise<module:fs.Stats | Stats>}
    */
   static getStats(name, properties = null) {
