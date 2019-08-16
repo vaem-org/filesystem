@@ -7,19 +7,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src -d dist",
     "dev": "babel src -d dist -w src",
-    "prepublish": "npm build"
+    "prepublish": "yarn build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@azure/storage-blob": "^10.4.0",
+    "aws-sdk": "^2.510.0",
     "ftp-srv": "^4.1.1",
     "moment": "^2.24.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
     "@babel/preset-env": "^7.5.5"
   }
 }
