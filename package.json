@@ -10,8 +10,8 @@
     "prepublish": "yarn build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Wouter van de Molengraft",
+  "license": "GPL",
   "dependencies": {
     "@azure/storage-blob": "^10.4.0",
     "aws-sdk": "^2.510.0",
