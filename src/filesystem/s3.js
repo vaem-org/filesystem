@@ -175,4 +175,8 @@ export class S3FileSystem extends FileSystem {
       Key: this.resolvePath(from)
     })
   }
+
+  async ensureDir() {
+    // directories do not exist
+  }
 }

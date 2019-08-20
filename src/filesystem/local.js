@@ -16,8 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export { FileSystem } from './filesystem';
-export { AzureFileSystem } from './filesystem/azure';
-export { S3FileSystem } from './filesystem/s3';
-export { BunnyCDNFileSystem } from './filesystem/bunnycdn';
-export { fileSystemFromURL } from './factory';
+import { FileSystem } from '../filesystem';
+import { resolve } from 'path';
+import { ensureDir } from 'fs-extra';
+
+export class LocalFileSystem extends FileSystem {
+  constructor(root) {
+    super(null, {root, cwd: '/'});
+
+    this.root = root;
+  }
+
+  async ensureDir(dirname) {
+    if (dirname.startsWith('.')) {
+      throw 'No relative paths allowed';
+    }
+
+    const resolved = resolve(this.root, dirname);
+    await ensureDir(resolved);
+  }
+}

@@ -22,4 +22,8 @@ export class FileSystem extends FTPSrvFileSystem {
   async getSignedUrl(filename) {
     return false
   }
+
+  async ensureDir(dirname) {
+
+  }
 }
