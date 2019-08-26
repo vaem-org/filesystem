@@ -17,14 +17,14 @@
  */
 
 import { FileSystem } from '../filesystem';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { ensureDir } from 'fs-extra';
 
 export class LocalFileSystem extends FileSystem {
   constructor(root) {
     super(null, {root, cwd: '/'});
 
-    this.root = root;
+    this.usedRoot = root;
   }
 
   async ensureDir(dirname) {
@@ -32,7 +32,7 @@ export class LocalFileSystem extends FileSystem {
       throw 'No relative paths allowed';
     }
 
-    const resolved = resolve(this.root, dirname);
+    const resolved = resolve(join(this.usedRoot, dirname));
     await ensureDir(resolved);
   }
 }
