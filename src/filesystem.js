@@ -18,6 +18,7 @@
 
 import { FileSystem as FTPSrvFileSystem } from 'ftp-srv'
 import { join } from 'path'
+import { Readable } from 'stream'
 
 export class FileSystem extends FTPSrvFileSystem {
   async getSignedUrl(filename) {
@@ -38,5 +39,27 @@ export class FileSystem extends FTPSrvFileSystem {
         await this.delete(join(dirname, file.name));
       }
     }
+  }
+
+  async writeFile(fileName, content) {
+    const { stream } = await this.write(fileName);
+
+    const source = new Readable();
+    source.pipe(stream);
+    source.push(content);
+    source.push(null);
+  }
+
+  async readFile(fileName) {
+    const { stream } = await this.read(fileName);
+    const buffers = [];
+
+    await (new Promise((accept, reject) => {
+      stream.on('data', buf => buffers.push(buf));
+      stream.on('end', accept);
+      stream.on('error', reject);
+    }));
+
+    return Buffer.concat(buffers);
   }
 }
