@@ -18,7 +18,7 @@
 
 import { FileSystem } from '../filesystem';
 import { resolve, join } from 'path';
-import { ensureDir } from 'fs-extra';
+import { ensureDir, remove } from 'fs-extra';
 
 export class LocalFileSystem extends FileSystem {
   constructor(root) {
@@ -34,5 +34,9 @@ export class LocalFileSystem extends FileSystem {
 
     const resolved = resolve(join(this.usedRoot, dirname));
     await ensureDir(resolved);
+  }
+
+  async recursivelyDelete(dirname) {
+    await remove(resolve(join(this.usedRoot, dirname)));
   }
 }

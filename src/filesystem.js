@@ -17,6 +17,7 @@
  */
 
 import { FileSystem as FTPSrvFileSystem } from 'ftp-srv'
+import { join } from 'path'
 
 export class FileSystem extends FTPSrvFileSystem {
   async getSignedUrl(filename) {
@@ -25,5 +26,17 @@ export class FileSystem extends FTPSrvFileSystem {
 
   async ensureDir(dirname) {
 
+  }
+
+  async recursivelyDelete(dirname) {
+    const files = await this.list(dirname);
+
+    for(let file of files) {
+      if (file.isDirectory()) {
+        await this.recursivelyDelete(join(dirname, file.name));
+      } else {
+        await this.delete(join(dirname, file.name));
+      }
+    }
   }
 }

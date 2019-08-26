@@ -135,4 +135,8 @@ export class BunnyCDNFileSystem extends FileSystem {
   async delete(filename) {
     await this.axios.delete(this.resolvePath(filename));
   }
+
+  async recursivelyDelete(dirname) {
+    return this.delete(filename);
+  }
 }
