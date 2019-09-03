@@ -35,7 +35,7 @@ export function fileSystemFromURL(url) {
   switch(parsed.protocol) {
     case 'azure:':
       fileSystem = new AzureFileSystem({
-        azureAccount: url.username,
+        azureAccount: parsed.username,
         azureKey: decodeURIComponent(parsed.password),
         azureContainer: parsed.hostname
       });
