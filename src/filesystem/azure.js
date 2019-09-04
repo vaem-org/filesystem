@@ -120,7 +120,6 @@ export class AzureFileSystem extends FileSystem {
   async list(path) {
     const resolved = this.resolvePath(path);
 
-    console.log(`Listing ${resolved}`);
     let marker = null;
 
     const result = [];
