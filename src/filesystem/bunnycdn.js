@@ -95,7 +95,7 @@ export class BunnyCDNFileSystem extends FileSystem {
     return this.workingDirectory
   }
 
-  async read(filename, {start=undefined}) {
+  async read(filename, {start=undefined}={}) {
     const clientPath = this.resolvePath(filename);
 
     const stream = (await this.axios.get(clientPath, {
@@ -111,11 +111,11 @@ export class BunnyCDNFileSystem extends FileSystem {
     }
   }
 
-  async write(filename, {append=false, start=undefined}) {
+  async write(filename, {append=false, start=undefined}={}) {
     const clientPath = this.resolvePath(filename);
     const stream = new PassThrough();
 
-    if (append || start !== 0) {
+    if (append || start) {
       throw 'Append not supported';
     }
 
