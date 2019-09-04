@@ -133,10 +133,11 @@ export class BunnyCDNFileSystem extends FileSystem {
   }
 
   async delete(filename) {
-    await this.axios.delete(this.resolvePath(filename));
+    const resolved = this.resolvePath(filename);
+    await this.axios.delete(resolved);
   }
 
   async recursivelyDelete(dirname) {
-    return this.delete(filename);
+    return this.axios.delete(this.resolvePath(dirname) + '/');
   }
 }
