@@ -184,6 +184,7 @@ export class AzureFileSystem extends FileSystem {
     )
     .then(() => {
       stream.end()
+      stream.emit('done');
     })
     .catch(e => {
       console.error(e);

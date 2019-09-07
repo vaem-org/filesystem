@@ -152,7 +152,8 @@ export class S3FileSystem extends FileSystem {
     .catch(e => {
       console.error(`An error occurred uploading file '${fileName}' to S3: ${e.toString()}`);
       stream.emit('error', e);
-    });
+    })
+    .then(() => stream.emit('done'));
 
     return {
       stream,

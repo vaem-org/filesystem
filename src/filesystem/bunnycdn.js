@@ -32,7 +32,8 @@ export class BunnyCDNFileSystem extends FileSystem {
     const parsed = new URL(url);
     this.workingDirectory = '/';
     this.axios = _axios.create({
-      baseURL: `https://storage.bunnycdn.com/${parsed.hostname}/`,
+      // baseURL: `https://storage.bunnycdn.com/${parsed.hostname}/`,
+      baseURL: `http://localhost:1080/${parsed.hostname}/`,
       headers: {
         'AccessKey': parsed.username
       }
@@ -125,6 +126,8 @@ export class BunnyCDNFileSystem extends FileSystem {
     ).catch(err => {
       console.error(`Error uploading file ${filename} to BunnyCDN: ${err.toString()}`);
       stream.emit('error', err);
+    }).then(() => {
+      stream.emit('done');
     });
 
     return {

@@ -39,4 +39,14 @@ export class LocalFileSystem extends FileSystem {
   async recursivelyDelete(dirname) {
     await remove(resolve(join(this.usedRoot, dirname)));
   }
+
+  async write(fileName, { append, start }) {
+    const result = await super.write(fileName, {append, start});
+
+    result.stream.on('end', () => {
+      result.stream.emit('done');
+    });
+
+    return result;
+  }
 }
