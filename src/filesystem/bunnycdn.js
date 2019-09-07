@@ -124,6 +124,7 @@ export class BunnyCDNFileSystem extends FileSystem {
       stream
     ).catch(err => {
       console.error(`Error uploading file ${filename} to BunnyCDN: ${err.toString()}`);
+      stream.emit('error', err);
     });
 
     return {
