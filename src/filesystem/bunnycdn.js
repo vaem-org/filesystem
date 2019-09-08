@@ -32,8 +32,7 @@ export class BunnyCDNFileSystem extends FileSystem {
     const parsed = new URL(url);
     this.workingDirectory = '/';
     this.axios = _axios.create({
-      // baseURL: `https://storage.bunnycdn.com/${parsed.hostname}/`,
-      baseURL: `http://localhost:1080/${parsed.hostname}/`,
+      baseURL: `https://storage.bunnycdn.com/${parsed.hostname}/`,
       headers: {
         'AccessKey': parsed.username
       }
