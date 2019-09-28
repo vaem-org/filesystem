@@ -40,7 +40,7 @@ export class LocalFileSystem extends FileSystem {
     await remove(resolve(join(this.usedRoot, dirname)));
   }
 
-  async write(fileName, { append, start }) {
+  async write(fileName, { append, start }={}) {
     const result = await super.write(fileName, {append, start});
 
     result.stream.on('end', () => {
