@@ -43,7 +43,7 @@ export class LocalFileSystem extends FileSystem {
   async write(fileName, { append, start }={}) {
     const result = await super.write(fileName, {append, start});
 
-    result.stream.on('end', () => {
+    result.stream.on('close', () => {
       result.stream.emit('done');
     });
 
