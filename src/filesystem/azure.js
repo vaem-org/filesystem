@@ -232,7 +232,7 @@ export class AzureFileSystem extends FileSystem {
       containerName,
       blobName,
       permissions: permissions.toString(),
-      expiryTime: moment().add(1, 'hours').toDate(),
+      expiryTime: moment().add(8, 'hours').toDate(),
       protocol: 'https'
     }, this.sharedKeyCredential);
 
