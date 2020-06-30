@@ -35,7 +35,9 @@ export class BunnyCDNFileSystem extends FileSystem {
       baseURL: `https://storage.bunnycdn.com/${parsed.hostname}/`,
       headers: {
         'AccessKey': parsed.username
-      }
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity
     });
 
     this.listCache = new NodeCache({stdTTL: 60});
